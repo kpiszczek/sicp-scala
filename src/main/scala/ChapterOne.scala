@@ -250,22 +250,29 @@ object ChapterOne {
     fibIter(1, 0, 0, 1, n)
   }
 
-  // ex 1.22
+  // ex 1.22 / 1.23
+  def timedCall(fn: => Any) {
+    val timeStart = System.nanoTime
+    val result = fn
+    val timeEnd = System.nanoTime
+    println(s"Elapsed time: ${timeEnd - timeStart}")
+  }
+
+  def nextForTest(x: Int) = if (x % 2 == 0) x + 1 else x + 2 
+
   @tailrec
   def searchForPrimes(start: Int, end: Int): Option[Int] = 
     if (start > end) None
-    else if (start % 2 == 0) searchForPrimes(start + 1, end)
     else if (isPrime(start)) Some(start)
-    else searchForPrimes(start + 2, end)
+    else searchForPrimes(nextForTest(start), end)
+    
 
   def findThreeSmallestPrimes(start: Int, end: Int): List[Int] = {
     @tailrec def go(start: Int, acc: List[Int]): List[Int] = 
       if (acc.length == 3 || start > end) acc
-      else {
-        searchForPrimes(start, end) match {
-          case None => acc
-          case Some(prime) => go(prime + 2, prime :: acc)
-        }
+      else searchForPrimes(start, end) match {
+        case None => acc
+        case Some(prime) => go(nextForTest(prime), prime :: acc)
       }
     go(start, Nil)
   }
