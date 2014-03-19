@@ -48,4 +48,15 @@ class ChapterOneSpec extends Specification {
       }
     }
   }
+
+  "fermat test" should {
+    "fail on Carmicheal numbers" in {
+      isPrimeFast(561, 10) must beTrue
+      isPrimeFast(1105, 10) must beTrue
+      isPrimeFast(1729, 10) must beTrue
+      isPrimeFast(2465, 10) must beTrue
+      isPrimeFast(2821, 10) must beTrue
+      isPrimeFast(6601, 10) must beTrue
+    }
+  }
 } 
