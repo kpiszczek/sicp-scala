@@ -276,4 +276,32 @@ object ChapterOne {
       }
     go(start, Nil)
   }
+
+  // ex 1.28
+  def millerRabinExpmod(base: Int, exp: Int, m: Int): Int = {
+    def squareMod(x: Int): Int = {
+      def checkNontrivialSqrt(sqr: Int): Int = 
+        if (sqr == 1 && x != 1 && x != m - 1) 0
+        else sqr
+      checkNontrivialSqrt(square(x) % m)
+    }
+    exp match {
+      case 0 => 1
+      case exp if isEven(exp) => 
+        squareMod(millerRabinExpmod(base, exp / 2, m))
+      case exp => 
+        (base * millerRabinExpmod(base, exp - 1, m)) % m
+    }
+  }
+
+  def millerRabinTest(n: Int) = 
+    millerRabinExpmod(
+      Random.nextInt(n - 1) + 1,
+      n - 1,
+      n) == 1
+
+  def millerFastPrime(n: Int, times: Int): Boolean = 
+    if (times == 0) true
+    else if (millerRabinTest(n)) millerFastPrime(n, times - 1)
+      else false
 }

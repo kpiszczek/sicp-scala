@@ -59,4 +59,15 @@ class ChapterOneSpec extends Specification {
       isPrimeFast(6601, 10) must beTrue
     }
   }
+
+  "miller-rabin" should {
+    "not fail on Carmicheal numbers" in {
+      millerFastPrime(561, 10) must beFalse
+      millerFastPrime(1105, 10) must beFalse
+      millerFastPrime(1729, 10) must beFalse
+      millerFastPrime(2465, 10) must beFalse
+      millerFastPrime(2821, 10) must beFalse
+      millerFastPrime(6601, 10) must beFalse
+    }
+  }
 } 
