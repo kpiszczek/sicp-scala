@@ -352,4 +352,17 @@ object ChapterOne {
   def factorialUsingProduct(n: Int): Int = 
     if (n > 0) product[Int](identity, 1, inc, n)
     else 0
+
+  // ex 1.32
+  def accumulate[A](combiner: (A, A) => A, nullValue: A, term: A => A, a: A, next: A => A, b: A)
+    (implicit num: Numeric[A]) = {
+    @tailrec def go(a: A, acc: A): A = 
+      if (num.gt(a, b)) acc
+      else go(next(a), combiner(term(a), acc))
+    go(a, nullValue)
+  }
+
+  def factorialUsingAccumulate(n: Int): Int =
+    if (n > 0) accumulate[Int](_ * _, 1, identity, 1, inc, n)
+    else 0
 }
