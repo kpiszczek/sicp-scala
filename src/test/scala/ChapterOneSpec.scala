@@ -69,5 +69,10 @@ class ChapterOneSpec extends Specification {
       millerFastPrime(2821, 10) must beFalse
       millerFastPrime(6601, 10) must beFalse
     }
+    "correctly match prime numbers" in {
+      millerFastPrime(1009, 10) must beTrue
+      millerFastPrime(1013, 10) must beTrue
+      millerFastPrime(1019, 10) must beTrue
+    }
   }
 } 

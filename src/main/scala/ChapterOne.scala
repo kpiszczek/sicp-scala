@@ -49,7 +49,7 @@ object ChapterOne {
     cc(amount, kindsOfCoins)
   }
 
-  def inc(x: Int) = x + 1
+  def inc[A](x: A)(implicit num: Numeric[A]) = num.plus(x, num.one)
   def dec(x: Int) = x - 1
 
   def fibonacci(n: Int): Int = {
@@ -304,4 +304,40 @@ object ChapterOne {
     if (times == 0) true
     else if (millerRabinTest(n)) millerFastPrime(n, times - 1)
       else false
+
+  def sum[A](term: A => A, a: A, next: A => A, b: A)(implicit num: Numeric[A]): A = {
+    @tailrec def go(a: A, acc: A): A = 
+      if (num.gt(a, b)) acc
+      else go(next(a), num.plus(term(a), acc))
+    go(a, num.zero)
+  }
+
+  def sumCubes(a: Int, b: Int) = 
+    sum[Int](cube, a, inc, b)
+
+  def identity[A](a: A) = a
+
+  def sumItegers(a: Int, b: Int) =
+    sum[Int](identity[Int], a, inc, b)
+
+  def piSum(a: Double, b: Double) = {
+    def piTerm(x: Double) = 1.0 / (x * (x + 2.0))
+    def piNext(x: Double) = x + 4.0
+    sum[Double](piTerm, a, piNext, b)
+  }
+
+  def integral(f: Double => Double, a: Double, b: Double, dx: Double): Double = {
+    def addDx(x: Double) = x + dx
+    sum[Double](f, a + dx/2.0, addDx, b) * dx
+  }
+
+  // ex 1.29
+  def simpsonIntegral(f: Double => Double, a: Double, b: Double, n: Int): Double = {
+    val h = (b - a) / n
+    def nthY(n: Double) = f(a + h*n)
+    def term(k: Double) = nthY(k) * (if (k == 0 || n == k) 1.0
+      else if (isOdd(k.toInt)) 4.0
+      else 2.0)
+    h / 3 * sum[Double](term, 0, inc, n)
+  }
 }
