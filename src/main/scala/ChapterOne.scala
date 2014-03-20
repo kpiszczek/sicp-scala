@@ -340,4 +340,16 @@ object ChapterOne {
       else 2.0)
     h / 3 * sum[Double](term, 0, inc, n)
   }
+
+  // ex 1.31
+  def product[A](term: A => A, a: A, next: A => A, b: A)(implicit num: Numeric[A]) = {
+    @tailrec def go(a: A, acc: A): A =
+      if (num.gt(a, b)) acc
+      else go(next(a), num.times(term(a), acc))
+    go(a, num.one)
+  }
+
+  def factorialUsingProduct(n: Int): Int = 
+    if (n > 0) product[Int](identity, 1, inc, n)
+    else 0
 }
