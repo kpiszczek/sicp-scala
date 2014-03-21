@@ -303,7 +303,7 @@ object ChapterOne {
   def millerFastPrime(n: Int, times: Int): Boolean = 
     if (times == 0) true
     else if (millerRabinTest(n)) millerFastPrime(n, times - 1)
-      else false
+    else false
 
   def sum[A](term: A => A, a: A, next: A => A, b: A)(implicit num: Numeric[A]): A = {
     @tailrec def go(a: A, acc: A): A = 
@@ -358,11 +358,33 @@ object ChapterOne {
     (implicit num: Numeric[A]) = {
     @tailrec def go(a: A, acc: A): A = 
       if (num.gt(a, b)) acc
-      else go(next(a), combiner(term(a), acc))
+      else go(next(a), combiner(acc, term(a)))
     go(a, nullValue)
   }
 
   def factorialUsingAccumulate(n: Int): Int =
     if (n > 0) accumulate[Int](_ * _, 1, identity, 1, inc, n)
     else 0
+
+  // ex 1.33
+  def filteredAccumulate[A](
+    combiner: (A, A) => A, nullValue: A, term: A => A, a: A, next: A => A, b: A, pred: A => Boolean)
+  (implicit num: Numeric[A]) = {
+    @tailrec def go(a: A, acc: A): A = 
+      if (num.gt(a, b)) acc
+      else if (pred(a)) go(next(a), combiner(acc, term(a)))
+      else go(next(a), acc)
+    go(a, nullValue)
+  }
+
+  // ex 1.33a
+  def sumSqurePrimes(a: Int, b: Int): Int = 
+    filteredAccumulate[Int](
+      _ + _, 0, square, a, inc, b, millerFastPrime(_, 10))
+
+  // ex 1.33b
+  def productCoprimes(n: Int): Int =
+    filteredAccumulate[Int](
+      _ * _, 1, identity, 1, inc, n - 1, i => gcd(i, n) == 1)
+    
 }
