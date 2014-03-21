@@ -3,6 +3,7 @@ package kuba.sicp
 import Numeric._
 import scala.annotation.tailrec
 import scala.util.{Try, Success, Failure}
+import scala.math.{log, pow}
 
 object ChapterOne {
   val Random = scala.util.Random
@@ -473,4 +474,25 @@ object ChapterOne {
   // ex 1.42
   def compose[A, B, C](f: B => C, g: A => B): A => C = 
     (x: A) => f(g(x))
+
+  // ex 1.43
+  def repeated[A](f: A => A, n: Int): A => A = 
+    if (n < 1) identity[A] _
+    else compose(f, repeated(f, n - 1))
+
+  // ex 1.44
+  def smooth(f: Double => Double) = {
+    val dx = 0.00001
+    (x: Double) => (f(x - dx) + f(x) + f(x + dx)) / 3
+  }
+
+  def nFoldSmooth(f: Double => Double, n: Int) = 
+    repeated(smooth, n)(f)
+
+  // ex 1.45
+  def nthRoot(x: Double, n: Int) =
+    fixedPoint(
+      repeated(averageDamp, (log(x) / log(2)).toInt)(
+        y => x / pow(y, n - 1)),
+      1.0)
 }
