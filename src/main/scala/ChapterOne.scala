@@ -2,6 +2,7 @@ package kuba.sicp
 
 import Numeric._
 import scala.annotation.tailrec
+import scala.util.{Try, Success, Failure}
 
 object ChapterOne {
   val Random = scala.util.Random
@@ -349,9 +350,9 @@ object ChapterOne {
     go(a, num.one)
   }
 
-  def factorialUsingProduct(n: Int): Int = 
-    if (n > 0) product[Int](identity, 1, inc, n)
-    else 0
+  val factorialUsingProduct: PartialFunction[Int, Int] = {
+    case n: Int if n > 0 => product[Int](identity, 1, inc, n)
+  }
 
   // ex 1.32
   def accumulate[A](combiner: (A, A) => A, nullValue: A, term: A => A, a: A, next: A => A, b: A)
@@ -362,9 +363,9 @@ object ChapterOne {
     go(a, nullValue)
   }
 
-  def factorialUsingAccumulate(n: Int): Int =
-    if (n > 0) accumulate[Int](_ * _, 1, identity, 1, inc, n)
-    else 0
+  val factorialUsingAccumulate: PartialFunction[Int, Int] = {
+    case n: Int if n > 0 => accumulate[Int](_ * _, 1, identity, 1, inc, n)
+  }
 
   // ex 1.33
   def filteredAccumulate[A](
@@ -386,5 +387,53 @@ object ChapterOne {
   def productCoprimes(n: Int): Int =
     filteredAccumulate[Int](
       _ * _, 1, identity, 1, inc, n - 1, i => gcd(i, n) == 1)
-    
+
+  def closeEnough(x: Double, y: Double) = abs[Double](x - y) < 0.001
+
+  def search(f: Double => Double, negPoint: Double, posPoint: Double): Double = {
+    val midPoint = average[Double](negPoint, posPoint)
+    if (closeEnough(negPoint, posPoint)) midPoint
+    else f(midPoint) match {
+      case x if x > 0.0 => search(f, negPoint, midPoint)
+      case x if x < 0.0 => search(f, midPoint, posPoint)
+      case _ => midPoint
+    }
+  }
+
+  def halfIntervalMethod(f: Double => Double, a: Double, b: Double): Try[Double] = {
+    val aValue = f(a)
+    val bValue = f(b)
+    if (aValue < 0.0 && bValue > 0.0) Success(search(f, a, b))
+    else if (bValue < 0.0 && aValue > 0.0) Success(search(f, b, a))
+    else Failure(new Exception(s"Values are not of opposite sign: $a $b"))
+  }
+
+  val tolerance = 0.00001
+
+  def fixedPoint(f: Double => Double, firstGuess: Double): Double = {
+    def closeEnough(v1: Double, v2: Double) = abs(v1 - v2) < tolerance
+    def tryGuess(guess: Double): Double = {
+      val next = f(guess)
+      if (closeEnough(guess, next)) next
+      else tryGuess(next)
+    }
+    tryGuess(firstGuess)
+  }
+
+  def sqrt2(x: Double) = fixedPoint(y => average(y, x / y), 1.0)
+
+  // ex 1.37
+  def contFrac(n: Int => Double, d: Int => Double, k: Int): Double = {
+    def go(i: Int, acc: Double): Double = 
+      if (i == 0) acc
+      else go(i - 1, n(i) / (d(i) + acc))
+    go(k, 0.0)
+  }
+
+  // ex 1.38
+  def euler(k: Int): Double = 
+    2.0 + contFrac(
+      _ => 1.0, 
+      i => if (i % 3.0 == 2.0) 2.0/3.0*i + 2.0/3.0 else 1.0,
+      k)
 }
