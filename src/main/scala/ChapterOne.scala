@@ -436,4 +436,11 @@ object ChapterOne {
       _ => 1.0, 
       i => if (i % 3.0 == 2.0) 2.0/3.0*i + 2.0/3.0 else 1.0,
       k)
+
+  // ex 1.39
+  def tanCf(x: Double, k: Int) = 
+    contFrac(
+      i => if (i == 1) x else -square[Double](x),
+      i => i * 2.0 - 1.0,
+      k)
 }
