@@ -412,7 +412,7 @@ object ChapterOne {
 
   def fixedPoint(f: Double => Double, firstGuess: Double): Double = {
     def closeEnough(v1: Double, v2: Double) = abs(v1 - v2) < tolerance
-    def tryGuess(guess: Double): Double = {
+    @tailrec def tryGuess(guess: Double): Double = {
       val next = f(guess)
       if (closeEnough(guess, next)) next
       else tryGuess(next)
@@ -424,7 +424,7 @@ object ChapterOne {
 
   // ex 1.37
   def contFrac(n: Int => Double, d: Int => Double, k: Int): Double = {
-    def go(i: Int, acc: Double): Double = 
+    @tailrec def go(i: Int, acc: Double): Double = 
       if (i == 0) acc
       else go(i - 1, n(i) / (d(i) + acc))
     go(k, 0.0)
@@ -443,4 +443,34 @@ object ChapterOne {
       i => if (i == 1) x else -square[Double](x),
       i => i * 2.0 - 1.0,
       k)
+
+  def averageDamp(f: Double => Double) = 
+    (x: Double) => average[Double](x, f(x))
+
+  def deriv(g: Double => Double) = {
+    val dx = 0.00001
+    (x: Double) => (g(x + dx) - g(x)) / dx
+  }
+
+  def newtonTransform(g: Double => Double) =
+    (x: Double) => g(x) / deriv(g)(x) - x 
+
+  def newtonsMethod(g: Double => Double, guess: Double) = 
+    fixedPoint(newtonTransform(g), guess)
+
+  def fixedPointOfTransform(
+    g: Double => Double, transform: (Double => Double) => (Double => Double), guess: Double) = 
+    fixedPoint(transform(g), guess)
+
+  // ex 1.40
+  def cubic(a: Double, b: Double, c: Double) = 
+    (x: Double) => cube(x) + a*square(x) + b*x + c
+
+  // ex 1.41
+  def double[A](f: A => A) =
+    (x: A) => f(f(x))
+
+  // ex 1.42
+  def compose[A, B, C](f: B => C, g: A => B): A => C = 
+    (x: A) => f(g(x))
 }
