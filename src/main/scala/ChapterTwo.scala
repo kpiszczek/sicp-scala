@@ -1,5 +1,6 @@
 package kuba.sicp
 
+import scala.annotation.tailrec
 import scala.language.implicitConversions
 import scala.math.{sqrt, pow, log}
 
@@ -132,5 +133,19 @@ object ChapterTwo {
   def cdr[A](x: List[A]): Option[List[A]] = x match {
     case Nil | _ :: Nil => None
     case _ :: tail => Some(tail)
+  }
+  // ex 2.17
+  @tailrec def last[A](as: List[A]): Option[A] = as match {
+    case Nil => None
+    case x :: Nil => Some(x)
+    case _ :: tail => last(tail)
+  }
+  // ex 2.18
+  def reverse[A](as: List[A]): List[A] = {
+    @tailrec def go(as: List[A], acc: List[A]): List[A] = as match {
+      case Nil => acc
+      case head :: tail => go(tail, head :: acc)
+    }
+    go(as, Nil)
   }
 }
