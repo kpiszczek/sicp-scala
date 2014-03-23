@@ -1,7 +1,7 @@
 package kuba.sicp
 
 import scala.language.implicitConversions
-import scala.math.sqrt
+import scala.math.{sqrt, pow, log}
 
 class Rational(n: Int, d: Int) {
   import ChapterOne.gcd
@@ -60,6 +60,30 @@ object Rectangle {
     Rectangle(topLeft, Point(topLeft.x + width, topLeft.y - height))
 }
 
+// ex 2.5
+class Pair(value: Double) {
+  def car: Double = 
+    if (value % 3 == 0) (new Pair(value / 3)).car
+    else log(value) / log(2)
+  def cdr: Double = 
+    if (value % 2 == 0) (new Pair(value / 2)).cdr
+    else log(value) / log(3)
+}
+
+object Pair {
+  def apply(a: Double, b: Double) =
+    new Pair(pow(2, a) * pow(3, b))
+}
+
+
 object ChapterTwo {
-  
+  def cons[A](x: A, y: List[A]) = x :: y
+  def car[A](x: List[A]): Option[A] = x match {
+    case Nil => None
+    case a :: _ => Some(a)
+  }
+  def cdr[A](x: List[A]): Option[List[A]] = x match {
+    case Nil | _ :: Nil => None
+    case _ :: tail => Some(tail)
+  }
 }
