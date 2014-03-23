@@ -495,4 +495,18 @@ object ChapterOne {
       repeated(averageDamp, (log(x) / log(2)).toInt)(
         y => x / pow(y, n - 1)),
       1.0)
+
+  // ex 1.46
+  def iterativeImprove[A](improve: A => A, closeEnough: (A, A) => Boolean): A => A =
+    (x: A) => {
+      val nextX = improve(x)
+      if (closeEnough(x, nextX)) nextX
+      else iterativeImprove(improve, closeEnough)(nextX)
+    }
+
+  def sqrtUsingIterImprove(x: Double) = 
+    iterativeImprove[Double](y => (x/y + y)/2.0, closeEnough)(1.0)
+
+  def fixedPointUsingIterImprove(f: Double => Double, firstGuess: Double) =
+    iterativeImprove(f, closeEnough)(firstGuess)
 }
