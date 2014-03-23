@@ -148,4 +148,20 @@ object ChapterTwo {
     }
     go(as, Nil)
   }
+
+  // ex 2.19
+  val usCoins: List[Double] = List(50, 25, 10, 5, 1)
+  val ukCoins: List[Double] = List(100, 50, 20, 10, 5, 2, 1, 0.5)
+
+  def countChange(amount: Double, coinValues: List[Double]): Int = amount match {
+    case 0.0 => 1
+    case a if a < 0.0 || coinValues.isEmpty => 0
+    case a => countChange(a, coinValues.tail) + countChange(a - coinValues.head, coinValues)
+  }
+
+  // ex 2.20
+  def sameParity(values: Int*): Seq[Int] = {
+    val parity = values.head % 2
+    values.filter(_ % 2 == parity)
+  }
 }
