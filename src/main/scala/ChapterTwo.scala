@@ -112,4 +112,22 @@ object ChapterTwo {
       i => 1 until i flatMap (j => 
         1 until j map(k => (i, j, k)))
       ) filter (t => t._1 + t._2 + t._3 == s)
+
+  // ex 2.42
+  def queens(boardSize: Int) = {
+    def inCheck(q1: (Int, Int), q2: (Int, Int)) =
+      q1._1 == q2._1 || q1._2 == q2._2 || 
+      (q1._1 - q2._1).abs == (q1._2 - q2._2).abs
+    def isSafe(queen: (Int, Int), queens: List[(Int, Int)]) = 
+      queens forall (q => !inCheck(queen, q))
+    def placeQueens(k: Int): List[List[(Int, Int)]] = 
+      if (k == 0) List(Nil)
+      else for {
+        queens <- placeQueens(k - 1)
+        col <- 0 until boardSize
+        queen = (k-1, col)
+        if isSafe(queen, queens)
+      } yield queen :: queens
+    placeQueens(boardSize)
+  }
 }
