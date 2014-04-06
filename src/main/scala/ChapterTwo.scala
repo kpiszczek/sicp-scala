@@ -95,4 +95,10 @@ object ChapterTwo {
   // ex 2.34
   def hornerEval(x: Double, coeffSequence: List[Double]): Double =
     coeffSequence.foldRight(0.0)((coeff, acc) => coeff + acc*x)
+
+  // ex 2.39
+  def reverse2[A](as: List[A]) = 
+    as.foldRight(Nil: List[A])((a, acc) => acc :+ a)
+  def reverse3[A](as: List[A]) = 
+    as.foldLeft(Nil: List[A])((acc, a) => a :: acc)
 }
