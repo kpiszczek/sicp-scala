@@ -25,6 +25,7 @@ object Tree {
         case Nil => acc
         case Leaf(x) :: rest => go(rest, acc :+ Leaf(x))
         case Branch(nodes @ _*) :: rest => go(rest, (go(nodes.toList, acc)))
+        case _ :: rest => go(rest, acc)
       }
       Branch(go(nodes.toList, Nil):_*)
     }
