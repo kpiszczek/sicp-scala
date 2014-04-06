@@ -74,4 +74,13 @@ object ChapterTwo {
     val parity = values.head % 2
     values.filter(_ % 2 == parity)
   }
+
+  // ex 2.32
+  def subsets[A](as: List[A]): List[List[A]] = as match {
+    case Nil => List(Nil)
+    case a :: rest => {
+      val ss = subsets(rest)
+      ss ::: ss.map(x => a :: x)
+    }
+  }
 }
