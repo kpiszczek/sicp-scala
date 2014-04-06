@@ -83,4 +83,16 @@ object ChapterTwo {
       ss ::: ss.map(x => a :: x)
     }
   }
+
+  // ex 2.33
+  def map[A, B](fn: A => B, as: List[A]): List[B] = 
+    as.foldLeft(Nil: List[B])((acc, a) => acc :+ fn(a))
+  def append[A](seq1: List[A], seq2: List[A]): List[A] =
+    seq1.reverse.foldLeft(seq2)((acc, a) => a :: acc)
+  def length[A](as: List[A]): Int =
+    as.foldLeft(0)((acc, a) => acc + 1)
+
+  // ex 2.34
+  def hornerEval(x: Double, coeffSequence: List[Double]): Double =
+    coeffSequence.foldRight(0.0)((coeff, acc) => coeff + acc*x)
 }
