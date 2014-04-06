@@ -101,4 +101,8 @@ object ChapterTwo {
     as.foldRight(Nil: List[A])((a, acc) => acc :+ a)
   def reverse3[A](as: List[A]) = 
     as.foldLeft(Nil: List[A])((acc, a) => a :: acc)
+
+  // ex 2.40
+  def uniquePairs(n: Int): Seq[(Int, Int)] =
+    1 to n flatMap (i => 1 to i - 1 map (j => (i, j)))
 }
