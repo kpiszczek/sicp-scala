@@ -104,5 +104,12 @@ object ChapterTwo {
 
   // ex 2.40
   def uniquePairs(n: Int): Seq[(Int, Int)] =
-    1 to n flatMap (i => 1 to i - 1 map (j => (i, j)))
+    1 to n flatMap (i => 1 until i map (j => (i, j)))
+
+  // ex 2.41
+  def allOrderedTriples(n: Int, s: Int): Seq[(Int, Int, Int)] =
+    1 to n flatMap (
+      i => 1 until i flatMap (j => 
+        1 until j map(k => (i, j, k)))
+      ) filter (t => t._1 + t._2 + t._3 == s)
 }
