@@ -6,15 +6,17 @@ class ChapterTwoSpec extends Specification {
   import ChapterTwo._
   import Symbols._
 
+  val x = Variable("x")
+
   "deriv" should {
-    "of x + 3 for x should be 1 0" in {
-      deriv(Sum(Variable("x"), Number(3)), Variable("x")) must equalTo(Sum(Number(1), Number(0)))
+    "of x + 3 for x should be 1" in {
+      deriv(Sum(x, Number(3)), x) must equalTo(Number(1.0))
     }
-    "of x * y for x should be 0* x + 1 * y" in {
-      deriv(Product(Variable("x"), Variable("y")), Variable("x")) must equalTo (
-        Sum(
-          Product(Number(0), Variable("x")),
-          Product(Number(1), Variable("y"))))
+    "of x * y for x should be y" in {
+      deriv(Product(x, Variable("y")), x) must equalTo (Variable("y"))
+    }
+    "of x ^ 2 for x should by 2 * x" in {
+      deriv(Exponentiation(x, Number(2)), x) must equalTo (Product(Number(2), x))
     }
   }
 }

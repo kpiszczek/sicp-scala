@@ -142,11 +142,40 @@ object Symbols {
       else memq(item, as)
   }
 
+  // ex 2.56
   sealed abstract class Expression
   case class Variable(name: String) extends Expression
-  case class Sum(addend: Expression, augend: Expression) extends Expression
+  case class Sum(addend: Expression, augend: Expression) extends Expression 
   case class Product(multiplier: Expression, multiplicand: Expression) extends Expression
   case class Number(value: Double) extends Expression
+  case class Exponentiation(base: Expression, exponent: Number) extends Expression
+
+  object Sum {
+    def make(a1: Expression, a2: Expression): Expression = (a1, a2) match {
+        case (Number(0.0), a2) => a2
+        case (a1, Number(0.0)) => a1
+        case (Number(a), Number(b)) => Number(a + b)
+        case (a1, a2) => Sum(a1, a2)
+      }
+  }
+
+  object Product {
+    def make(m1: Expression, m2: Expression): Expression = (m1, m2) match {
+      case (Number(0.0), _) | (_, Number(0.0)) => Number(0.0)
+      case (a, Number(1.0)) => a
+      case (Number(1.0), a) => a
+      case (Number(n), Number(m)) => Number(n * m)
+      case (m1, m2) => Product(m1, m2)
+    }
+  }
+
+  object Exponentiation {
+    def make(b: Expression, e: Number): Expression = (b, e) match {
+      case (_, Number(0.0)) => Number(0.0)
+      case (a, Number(1.0)) => a
+      case (b, e) => Exponentiation(b, e)
+    }
+  }
 
   def deriv(expression: Expression, variable: Variable): Expression = 
     expression match {
@@ -156,11 +185,14 @@ object Symbols {
           else 0
         )
       case Sum(a1, a2) => 
-        Sum(deriv(a1, variable), deriv(a2, variable))
-      case Product(m1, m2) => Sum(
-          Product(deriv(m2, variable), m1),
-          Product(deriv(m1, variable), m2)
+        Sum.make(deriv(a1, variable), deriv(a2, variable))
+      case Product(m1, m2) => Sum.make(
+          Product.make(deriv(m2, variable), m1),
+          Product.make(deriv(m1, variable), m2)
         )
+      case Exponentiation(b, e) => 
+        Product.make(e, Exponentiation.make(b, Number(e.value - 1.0)))
+
       case exp => throw new Exception(s"Unknown expression type: ${exp}")
     }
 }
