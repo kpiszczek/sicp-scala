@@ -1,7 +1,8 @@
 package kuba.sicp
 
-import scala.annotation.tailrec
-import scala.math.{sqrt, pow, log}
+import annotation.tailrec
+import math.{ sqrt, pow, log }
+import util.{ Try, Success, Failure }
 
 // ex 2.2
 case class Point(x: Double, y: Double)
@@ -130,4 +131,36 @@ object ChapterTwo {
       } yield queen :: queens
     placeQueens(boardSize)
   }
+}
+
+object Symbols {
+  @tailrec
+  def memq(item: Symbol, x: List[Symbol]): Boolean = x match {
+    case Nil => false
+    case a :: as => 
+      if (a == item) true
+      else memq(item, as)
+  }
+
+  sealed abstract class Expression
+  case class Variable(name: String) extends Expression
+  case class Sum(addend: Expression, augend: Expression) extends Expression
+  case class Product(multiplier: Expression, multiplicand: Expression) extends Expression
+  case class Number(value: Double) extends Expression
+
+  def deriv(expression: Expression, variable: Variable): Expression = 
+    expression match {
+      case Number(_) => Number(0)
+      case v: Variable => Number(
+          if (v == variable) 1
+          else 0
+        )
+      case Sum(a1, a2) => 
+        Sum(deriv(a1, variable), deriv(a2, variable))
+      case Product(m1, m2) => Sum(
+          Product(deriv(m2, variable), m1),
+          Product(deriv(m1, variable), m2)
+        )
+      case exp => throw new Exception(s"Unknown expression type: ${exp}")
+    }
 }
